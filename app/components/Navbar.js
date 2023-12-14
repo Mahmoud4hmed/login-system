@@ -9,7 +9,7 @@ function Navbar() {
         <div className="space-x-4">
           <Link href="/" className="text-white">Home</Link>
           <Link href="/login" className="text-white">Login</Link>
-          <Link href="#" className="text-white">Services</Link>
+          <Link href="/admin" className="text-white">Admin</Link>
           <Link href="#" className="text-white">Contact</Link>
         </div>
       </div>
