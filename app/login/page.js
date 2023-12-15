@@ -1,10 +1,13 @@
-import React from 'react'
+"use client";
+import React, { useContext } from 'react'
+import { useAppContext } from '../context/AuthContext'
 
 function Login() {
+  let { loginUser } = useAppContext()
   return (
     <div className="flex min-h-screen flex-col items-center pt-20">
       <h1 className="pb-10 text-3xl">Login</h1>
-      <form className="flex flex-col ">
+      <form className="flex flex-col " onSubmit={loginUser}>
         <label>
           username
         </label>
