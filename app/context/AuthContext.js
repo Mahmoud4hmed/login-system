@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import { createContext, useEffect, useState, useContext } from 'react'
 import { jwtDecode } from "jwt-decode";
 
@@ -6,9 +6,9 @@ const AppContext = createContext()
 
 export const AppWrapper = ({ children }) => {
     
-    const [state, setState] = useState({hello: 'Mahmoud'})
-    const [AuthTokens, setAuthTokens] = useState(null)
-    const [user, setUser] = useState(false)
+    // const [state, setState] = useState({hello: 'Mahmoud'})
+    const [AuthTokens, setAuthTokens] = useState(()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+    const [user, setUser] = useState(()=> localStorage.getItem('authTokens') ? jwtDecode(localStorage.getItem('authTokens')) : null)
 
 
     let loginUser = async (e) => {
@@ -33,9 +33,16 @@ export const AppWrapper = ({ children }) => {
         }
     }
 
+    let logoutUser = () => {
+        setAuthTokens(null)
+        setUser(null)
+        localStorage.removeItem('authTokens')
+    }
+
     let contextData = {
         user:user,
-        loginUser:loginUser
+        loginUser:loginUser,
+        logoutUser:logoutUser,
     }
 
     return(
