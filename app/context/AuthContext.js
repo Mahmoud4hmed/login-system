@@ -8,7 +8,8 @@ export const AppWrapper = ({ children }) => {
     
     const [state, setState] = useState({hello: 'Mahmoud'})
     const [AuthTokens, setAuthTokens] = useState(null)
-    const [user, setUser] = useState('next')
+    const [user, setUser] = useState(false)
+
 
     let loginUser = async (e) => {
         e.preventDefault()
@@ -26,6 +27,7 @@ export const AppWrapper = ({ children }) => {
         if (response.status === 200) {
             setAuthTokens(data)
             setUser(jwtDecode(data.access))
+            localStorage.setItem('authTokens', JSON.stringify(data))
         } else {
             alert('something went wrong!')
         }

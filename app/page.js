@@ -1,6 +1,4 @@
 "use client";
-import Image from 'next/image'
-import Login from './login/page'
 import { useAppContext } from './context/AuthContext'
 
 export default function Home() {
