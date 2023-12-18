@@ -2,6 +2,7 @@
 import { createContext, useEffect, useState, useContext } from 'react'
 import { jwtDecode } from "jwt-decode";
 
+
 const AppContext = createContext()
 
 export const AppWrapper = ({ children }) => {
@@ -9,7 +10,7 @@ export const AppWrapper = ({ children }) => {
     // const [state, setState] = useState({hello: 'Mahmoud'})
     const [AuthTokens, setAuthTokens] = useState(()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     const [user, setUser] = useState(()=> localStorage.getItem('authTokens') ? jwtDecode(localStorage.getItem('authTokens')) : null)
-
+    const [loading, setLoading] = useState(true)
 
     let loginUser = async (e) => {
         e.preventDefault()
@@ -24,6 +25,7 @@ export const AppWrapper = ({ children }) => {
             })
         })
         let data = await response.json()
+
         if (response.status === 200) {
             setAuthTokens(data)
             setUser(jwtDecode(data.access))
@@ -39,11 +41,45 @@ export const AppWrapper = ({ children }) => {
         localStorage.removeItem('authTokens')
     }
 
+    let updateUser = async () => {
+    let response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'refresh': AuthTokens.refresh
+            })
+        })
+        let data = await response.json()
+        if (response.status === 200) {
+            setAuthTokens(data)
+            setUser(jwtDecode(data.access))
+            localStorage.setItem('authTokens', JSON.stringify(data))
+        } else {
+            logoutUser()
+        }
+    }
+
     let contextData = {
         user:user,
+        AuthTokens:AuthTokens,
         loginUser:loginUser,
         logoutUser:logoutUser,
     }
+
+    useEffect(()=>{
+
+        let fourMinutes = 1000 * 60 * 4
+        let interval = setInterval(()=> {
+            if (AuthTokens) {
+                updateUser()
+            }
+        }, fourMinutes)
+        return () => clearInterval(interval)
+        
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [AuthTokens, loading])
 
     return(
         <AppContext.Provider value={contextData}>
