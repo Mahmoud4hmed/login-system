@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import PrivateRoute from './components/PrivateRoute'
 
 function Home() {
-  const { user } = useAppContext()
-  const { AuthTokens } = useAppContext()
+  const { user, AuthTokens, logoutUser } = useAppContext()
   let [notes, setNotes] = useState([])
 
   useEffect(() => {
     {AuthTokens ? getNotes() : null}
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   let getNotes = async () => {
     let response = await fetch('http://127.0.0.1:8000/api/notes/', {
@@ -21,7 +21,11 @@ function Home() {
       }
     })
     let data = await response.json()
-    setNotes(data)
+    if(response.status === 200){
+      setNotes(data)
+    } else if(response.statusText === 'Unauthorized'){
+      logoutUser()
+    }
   }
 
   return (

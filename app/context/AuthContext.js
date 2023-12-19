@@ -48,7 +48,7 @@ export const AppWrapper = ({ children }) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'refresh': AuthTokens.refresh
+                'refresh': AuthTokens?.refresh
             })
         })
         let data = await response.json()
@@ -58,6 +58,10 @@ export const AppWrapper = ({ children }) => {
             localStorage.setItem('authTokens', JSON.stringify(data))
         } else {
             logoutUser()
+        }
+
+        if(loading){
+            setLoading(false)
         }
     }
 
@@ -69,6 +73,10 @@ export const AppWrapper = ({ children }) => {
     }
 
     useEffect(()=>{
+
+        if(loading){
+            updateUser()
+        }
 
         let fourMinutes = 1000 * 60 * 4
         let interval = setInterval(()=> {
@@ -83,7 +91,7 @@ export const AppWrapper = ({ children }) => {
 
     return(
         <AppContext.Provider value={contextData}>
-            {children}
+            {loading ? null : children}
         </AppContext.Provider>
     )
 }
